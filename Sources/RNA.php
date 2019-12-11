@@ -8,8 +8,6 @@ class RNA
 		if (!is_array($config)) {
 			trigger_error('No proper configuration.');
 		}
-
-		//$db = new PDO('mysql:host=localhost;dbname=testdb;charset=utf8', 'username', 'password');
 		$db = $config['driver'].':'.$config['user'].'@'.$config['host'].':'.$config['database'];
 
 		if (isset(self::$__instances[$db])) {
@@ -20,8 +18,6 @@ class RNA
 
 		return self::$__instances[$db] = new $class($config);
 	}
-	
-	//private function __construct() { }
 }
 class RNAMysql {
 	
@@ -55,19 +51,18 @@ class RNAMysql {
 		'data' => null,
 		'took' => null,
 	);
-	function __construct($config)
-	{
+	function __construct($config) {
 		extract($config);
 
 		if (!isset($encoding)) {
-			$encoding = 'utf8';
+			$encoding = 'utf8mb4';
 		}
-
-		$this->connect("mysql:host=$host;dbname=$database;charset=$encoding", $user, $password);
+		if (!isset($port)) {
+			$port = "8889";
+		}
+		$this->connect("mysql:host=$host;port=$port;dbname=$database;charset=$encoding", $user, $password);
 	}
-
-	public function connect($pdo_config, $user, $password)
-	{
+	public function connect($pdo_config, $user, $password) {
 		try
 		{
 			$this->pdo = new PDO($pdo_config, $user, $password);
